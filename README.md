@@ -45,12 +45,29 @@ termux-change-repo
    claude --version
    claude "hello"
    ```
-5. Clone/init this repo:
+5. Init this repo, with `.git` storage split onto Termux's native
+   filesystem — `/storage/emulated/0` is a FUSE mount and git's own
+   internals (locks, refs) don't reliably work there:
    ```
    cd ~/storage/shared/aibridge   # or wherever
-   git init
+   git init --separate-git-dir=~/git-repos/aibridge.git
+   git config --global --add safe.directory "$(pwd)"
    ```
-6. Run:
+6. Git credentials, scoped per-repo (needed since a single Android user
+   account may push to several repos with different tokens):
+   ```
+   git config --global credential.helper store
+   git config --global credential.useHttpPath true
+   ```
+   Generate a token per repo at github.com → Settings → Developer
+   settings → Personal access tokens, then add one line per repo to
+   `~/.git-credentials` (created if missing), **including the repo path**
+   — without `useHttpPath` + path-scoped lines, git matches credentials
+   by host only and will use the same token for every GitHub repo:
+   ```
+   https://<user>:<token>@github.com/<user>/<repo>.git
+   ```
+7. Run:
    ```
    npm start        # plain run
    npm run dev      # nodemon, auto-restart on change
