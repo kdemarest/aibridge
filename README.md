@@ -53,20 +53,20 @@ termux-change-repo
    git init --separate-git-dir=~/git-repos/aibridge.git
    git config --global --add safe.directory "$(pwd)"
    ```
-6. Git credentials, scoped per-repo (needed since a single Android user
-   account may push to several repos with different tokens):
+6. Git credentials: one fine-grained token covers every repo.
    ```
    git config --global credential.helper store
-   git config --global credential.useHttpPath true
    ```
-   Generate a token per repo at github.com → Settings → Developer
-   settings → Personal access tokens, then add one line per repo to
-   `~/.git-credentials` (created if missing), **including the repo path**
-   — without `useHttpPath` + path-scoped lines, git matches credentials
-   by host only and will use the same token for every GitHub repo:
+   Make the token at github.com → Settings → Developer settings →
+   Personal access tokens → Fine-grained tokens, and add each repo under
+   its **Repository access** (Contents: read and write). A token's repo
+   list can be edited later without changing the token. Then put one line
+   in `~/.git-credentials` (created if missing):
    ```
-   https://<user>:<token>@github.com/<user>/<repo>.git
+   https://<user>:<token>@github.com
    ```
+   Don't run `gh auth setup-git`: it routes git logins through `gh`'s
+   own token instead of this file.
 7. Run:
    ```
    npm start        # plain run
